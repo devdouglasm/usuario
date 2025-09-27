@@ -7,6 +7,7 @@ import com.devdouglasm.usuario.infrastructure.entity.Usuario;
 import com.devdouglasm.usuario.infrastructure.exceptions.ConflictException;
 import com.devdouglasm.usuario.infrastructure.exceptions.ResourceNotFoundException;
 import com.devdouglasm.usuario.infrastructure.repository.UsuarioRepository;
+import com.devdouglasm.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public UsuarioDTO salvaUsuario(UsuarioDTO dto) {
@@ -29,6 +31,7 @@ public class UsuarioService {
         return new UsuarioDTO(usuario);
     }
 
+    @Transactional(readOnly = true)
     public Usuario achaUsuario(String email) {
         return usuarioRepository.findByEmail(email).orElseThrow(
                 () -> new ResourceNotFoundException("Email não encontrado " + email));
@@ -38,6 +41,15 @@ public class UsuarioService {
     public void deletarUsuario(String email) {
         usuarioRepository.deleteByEmail(email);
     }
+
+    public UsuarioDTO atualizaDadosUsuario(String token, UsuarioDTO dto) {
+        String email = jwtUtil.extractUsername(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não encontrado"));
+        updateUsuario(dto, usuario);
+        return new UsuarioDTO(usuario);
+    }
+
 
     private void copyDtoToEntity(UsuarioDTO dto, Usuario entity) {
         entity.setNome(dto.getNome());
@@ -63,4 +75,12 @@ public class UsuarioService {
         return usuarioRepository.existsByEmail(email);
     }
 
+    public void updateUsuario(UsuarioDTO dto, Usuario entity) {
+        entity.setNome(dto.getNome() != null ? dto.getNome() : entity.getNome());
+        entity.setEmail(dto.getEmail() != null ? dto.getEmail() : entity.getEmail());
+        entity.setId(entity.getId());
+        entity.setSenha(dto.getSenha() != null ? dto.getSenha() : entity.getSenha());
+        entity.setEnderecos(entity.getEnderecos());
+        entity.setTelefones(entity.getTelefones());
+    }
 }
