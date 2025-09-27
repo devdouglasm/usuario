@@ -37,6 +37,14 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private List<Endereco> enderecos = new ArrayList<>();
 
+    public void addTelefone(Telefone telefone) {
+        telefones.add(telefone);
+    }
+
+    public void addEndereco(Endereco endereco) {
+        enderecos.add(endereco);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
@@ -51,4 +59,5 @@ public class Usuario implements UserDetails {
     public String getUsername() {
         return this.email;
     }
+
 }
