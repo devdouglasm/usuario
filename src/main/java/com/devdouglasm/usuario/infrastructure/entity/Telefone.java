@@ -1,5 +1,6 @@
 package com.devdouglasm.usuario.infrastructure.entity;
 
+import com.devdouglasm.usuario.dto.TelefoneDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,9 @@ public class Telefone {
     @Column(name = "ddd", length = 3)
     private String ddd;
 
+    public Telefone(TelefoneDTO dto) {
+        id = dto.getId();
+        numero = dto.getNumero();
+        ddd = dto.getDdd();
+    }
 }

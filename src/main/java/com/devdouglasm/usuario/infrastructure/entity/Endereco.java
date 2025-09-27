@@ -1,5 +1,6 @@
 package com.devdouglasm.usuario.infrastructure.entity;
 
+import com.devdouglasm.usuario.dto.EnderecoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,4 +27,12 @@ public class Endereco {
     private String complemento;
     @Column(name = "cep", length = 9)
     private String cep;
+
+    public Endereco(EnderecoDTO dto) {
+        id = dto.getId();
+        rua = dto.getRua();
+        numero = dto.getNumero();
+        complemento = dto.getComplemento();
+        cep = dto.getCep();
+    }
 }
