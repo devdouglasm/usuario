@@ -35,6 +35,18 @@ public class UsuarioController {
         return "Bearer " + jwtUtil.generateToken(usuarioDTO.getEmail());
     }
 
+    @PostMapping("/endereco")
+    public ResponseEntity<EnderecoDTO> cadastraEndereco(@RequestBody EnderecoDTO dto,
+                                                        @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(usuarioService.cadastraEndereco(token, dto));
+    }
+
+    @PostMapping("/telefone")
+    public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO dto,
+                                                        @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(usuarioService.cadastraTelefone(token, dto));
+    }
+
     @GetMapping
     public ResponseEntity<UsuarioDTO> achaUsuario(@RequestParam String email) {
         return ResponseEntity.ok(usuarioService.achaUsuario(email));
@@ -53,7 +65,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/telefone")
-    public ResponseEntity<TelefoneDTO> atualizaDadosEndereco(@RequestBody TelefoneDTO dto,
+    public ResponseEntity<TelefoneDTO> atualizaDadosTelefone(@RequestBody TelefoneDTO dto,
                                                              @RequestParam("id") Long id) {
         return ResponseEntity.ok(usuarioService.atualizaDadosTelefone(id, dto));
     }

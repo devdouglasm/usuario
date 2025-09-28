@@ -79,6 +79,30 @@ public class UsuarioService {
         return new TelefoneDTO(telefoneRepository.save(entity));
     }
 
+    @Transactional
+    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto) {
+        String email = jwtUtil.extractUsername(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não encontrado"));
+        Endereco entity = new Endereco();
+        copyDtoToEntity(dto, entity);
+        usuario.addEndereco(entity);
+        usuarioRepository.save(usuario);
+        return new EnderecoDTO(entity);
+    }
+
+    @Transactional
+    public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto) {
+        String email = jwtUtil.extractUsername(token.substring(7));
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Email não encontrado"));
+        Telefone entity = new Telefone();
+        copyDtoToEntity(dto, entity);
+        usuario.addTelefone(entity);
+        usuarioRepository.save(usuario);
+        return new TelefoneDTO(entity);
+    }
+
 
     private void copyDtoToEntity(UsuarioDTO dto, Usuario entity) {
         entity.setNome(dto.getNome());
@@ -86,6 +110,18 @@ public class UsuarioService {
         entity.setSenha(dto.getSenha());
         entity.setEnderecos(dto.getEnderecos().stream().map(Endereco::new).toList());
         entity.setTelefones(dto.getTelefones().stream().map(Telefone::new).toList());
+    }
+
+    private void copyDtoToEntity(EnderecoDTO dto, Endereco entity) {
+        entity.setRua(dto.getRua());
+        entity.setCep(dto.getCep());
+        entity.setNumero(dto.getNumero());
+        entity.setComplemento(dto.getComplemento());
+    }
+
+    private void copyDtoToEntity(TelefoneDTO dto, Telefone entity) {
+        entity.setDdd(dto.getDdd());
+        entity.setNumero(dto.getNumero());
     }
 
     public void emailExiste(String email) {
